@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RedisCacheWebAPIExample.Services;
 using StackExchange.Redis;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace RedisCacheWebAPIExample.Controllers
 {
@@ -11,23 +13,35 @@ namespace RedisCacheWebAPIExample.Controllers
     [Route("[controller]")]
     public class homeController : ControllerBase
     {
-        private readonly IDatabase _database;
-
-        public homeController(IDatabase database)
+        private readonly ICacheService _cacheService;
+        public homeController(ICacheService cacheService)
         {
-            _database = database;
+            _cacheService = cacheService;
+            _cacheService.SetCacheValueAsync("Cache Name", cacheService.GetType().Name);
         }
 
         [HttpGet("{key}")]
-        public string Get(string key)
+        public async Task<IActionResult> GetAsync(string key)
         {
-            return _database.StringGet(key);
+            var result = await _cacheService.GetCacheValueAsync(key);
+            return StatusCode(StatusCodes.Status200OK, result);
         }
 
-        [HttpPost]
-        public void Post([FromBody] KeyValuePair<string, string> keyValue)
+        [HttpPost("{key}/{value}")]
+        public async Task<IActionResult> Post(string key, string value)
         {
-            _database.StringSet(keyValue.Key, keyValue.Value);
+            await _cacheService.SetCacheValueAsync(key, value);
+            return StatusCode(StatusCodes.Status201Created);
+        }
+
+        /// <summary>
+        /// Api status check
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("status")]
+        public IActionResult Get()
+        {
+            return StatusCode(StatusCodes.Status200OK, "Its working");
         }
 
         /// <summary>
@@ -35,9 +49,10 @@ namespace RedisCacheWebAPIExample.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> GetAsync()
         {
-            return StatusCode(StatusCodes.Status200OK, "Its working");
+            var result = await _cacheService.GetCacheValueAsync("Cache Name");
+            return StatusCode(StatusCodes.Status200OK, result);
         }
     }
 }

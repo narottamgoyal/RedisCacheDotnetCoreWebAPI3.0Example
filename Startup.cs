@@ -40,7 +40,7 @@ namespace RedisCacheWebAPIExample
             services.AddControllers();
             services.AddAutoMapper(typeof(Startup));
             services.RegisterDbDependancies(_configurationSetting);
-            services.RegisterServiceDependancies(Configuration);
+            services.RegisterServiceDependancies(_configurationSetting);
 
             #region Swagger
 

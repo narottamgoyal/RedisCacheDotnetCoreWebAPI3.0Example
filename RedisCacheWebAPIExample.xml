@@ -6,6 +6,12 @@
     <members>
         <member name="M:RedisCacheWebAPIExample.Controllers.homeController.Get">
             <summary>
+            Api status check
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:RedisCacheWebAPIExample.Controllers.homeController.GetAsync">
+            <summary>
             Home controller
             </summary>
             <returns></returns>

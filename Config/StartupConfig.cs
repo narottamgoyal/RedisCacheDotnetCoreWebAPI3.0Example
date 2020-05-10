@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using RedisCacheWebAPIExample.Services;
 using StackExchange.Redis;
 
 namespace RedisCacheWebAPIExample.Config
@@ -15,18 +16,26 @@ namespace RedisCacheWebAPIExample.Config
             return iop.Value;
         }
 
-        public static void RegisterServiceDependancies(this IServiceCollection services, IConfiguration configuration)
+        public static void RegisterServiceDependancies(this IServiceCollection services, ConfigurationSetting configurationSetting)
         {
-            //services.AddSingleton<IMongoDbQueryRepository, MongoDbQueryRepository>();
+            if (configurationSetting.UseRedisCache)
+            {
+                services.AddSingleton<ICacheService, RedisCacheService>();
+                services.AddHostedService<RedisSubscriber>();
+            }
+            else
+                services.AddSingleton<ICacheService, InMemoryCacheService>();
         }
 
         public static void RegisterDbDependancies(this IServiceCollection services, ConfigurationSetting configurationSetting)
         {
-            IConnectionMultiplexer redis = ConnectionMultiplexer.Connect(configurationSetting.RedisConnectionString);
-            services.AddScoped(s => redis.GetDatabase());
-
-            //services.AddSingleton<IConnectionMultiplexer>(x =>
-            //ConnectionMultiplexer.Connect(configurationSetting.RedisConnectionString));
+            //IConnectionMultiplexer redis = ConnectionMultiplexer.Connect(configurationSetting.RedisConnectionString);
+            //services.AddScoped(s => redis.GetDatabase());
+            if (configurationSetting.UseRedisCache)
+            {
+                services.AddSingleton<IConnectionMultiplexer>(x =>
+                    ConnectionMultiplexer.Connect(configurationSetting.RedisConnectionString));
+            }
         }
     }
 }
