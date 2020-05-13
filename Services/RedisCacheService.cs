@@ -1,7 +1,5 @@
 ﻿using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace RedisCacheWebAPIExample.Services
@@ -23,6 +21,11 @@ namespace RedisCacheWebAPIExample.Services
         public async Task SetCacheValueAsync(string key, string value)
         {
             await _db.StringSetAsync(key, value);
+        }
+
+        public async Task SetCacheValueAsync(string key, string value, TimeSpan timeSpan)
+        {
+            await _db.StringSetAsync(key, value, timeSpan);
         }
     }
 }

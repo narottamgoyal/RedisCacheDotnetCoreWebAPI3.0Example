@@ -25,6 +25,7 @@ namespace RedisCacheWebAPIExample.Config
             }
             else
                 services.AddSingleton<ICacheService, InMemoryCacheService>();
+            services.AddSingleton<IResponseCacheService, ResponseCacheService>();
         }
 
         public static void RegisterDbDependancies(this IServiceCollection services, ConfigurationSetting configurationSetting)

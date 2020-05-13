@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RedisCacheWebAPIExample.CustomCacheAttribute;
 using RedisCacheWebAPIExample.Services;
-using System;
 using System.Threading.Tasks;
 
 namespace RedisCacheWebAPIExample.Controllers
@@ -11,26 +9,28 @@ namespace RedisCacheWebAPIExample.Controllers
     [EnableCors("corspolicy")]
     [ApiController]
     [Route("[controller]")]
-    public class homeController : ControllerBase
+    public class DirectTestingController : ControllerBase
     {
         private readonly ICacheService _cacheService;
-        public homeController(ICacheService cacheService)
+        public DirectTestingController(ICacheService cacheService)
         {
             _cacheService = cacheService;
+            _cacheService.SetCacheValueAsync("Cache Name", cacheService.GetType().Name);
         }
 
         [HttpGet("{key}")]
-        [MyCache(60)]
         public async Task<IActionResult> GetAsync(string key)
         {
-            return StatusCode(StatusCodes.Status200OK, DateTime.Now.ToString());
+            var result = await _cacheService.GetCacheValueAsync(key);
+            if (result == null) return StatusCode(StatusCodes.Status404NotFound);
+            return StatusCode(StatusCodes.Status200OK, result);
         }
 
         [HttpPost("{key}/{value}")]
-        [InValidateMyCache]
         public async Task<IActionResult> Post(string key, string value)
         {
-            return StatusCode(StatusCodes.Status200OK, DateTime.Now.ToString());
+            await _cacheService.SetCacheValueAsync(key, value);
+            return StatusCode(StatusCodes.Status201Created);
         }
 
         /// <summary>
@@ -50,7 +50,9 @@ namespace RedisCacheWebAPIExample.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
-            return StatusCode(StatusCodes.Status200OK, _cacheService.GetType().Name);
+            var result = await _cacheService.GetCacheValueAsync("Cache Name");
+            if (result == null) return StatusCode(StatusCodes.Status404NotFound);
+            return StatusCode(StatusCodes.Status200OK, result);
         }
     }
 }
