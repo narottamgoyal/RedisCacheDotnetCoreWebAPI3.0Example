@@ -27,7 +27,7 @@ namespace RedisCacheWebAPIExample.Controllers
         }
 
         [HttpPost("{key}/{value}")]
-        [InValidateMyCache]
+        [InValidateMyCache(@"[\/]home")]
         public async Task<IActionResult> Post(string key, string value)
         {
             return StatusCode(StatusCodes.Status200OK, DateTime.Now.ToString());

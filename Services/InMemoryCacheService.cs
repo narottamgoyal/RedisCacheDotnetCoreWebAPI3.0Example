@@ -13,6 +13,11 @@ namespace RedisCacheWebAPIExample.Services
             return Task.FromResult(_cache.Get<string>(key));
         }
 
+        public Task InValidateKey(string keyPrefix)
+        {
+            return Task.CompletedTask;
+        }
+
         public Task SetCacheValueAsync(string key, string value)
         {
             _cache.Set(key, value);
