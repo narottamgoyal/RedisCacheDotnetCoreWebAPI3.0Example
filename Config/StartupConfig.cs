@@ -21,7 +21,6 @@ namespace RedisCacheWebAPIExample.Config
             if (configurationSetting.UseRedisCache)
             {
                 services.AddSingleton<ICacheService, RedisCacheService>();
-                services.AddHostedService<RedisSubscriber>();
             }
             else
                 services.AddSingleton<ICacheService, InMemoryCacheService>();
