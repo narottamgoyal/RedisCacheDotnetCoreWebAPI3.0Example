@@ -20,37 +20,31 @@ namespace RedisCacheWebAPIExample.Controllers
         }
 
         [HttpGet("{key}")]
-        [MyCache(60)]
+        [MyCache(120)]
         public async Task<IActionResult> GetAsync(string key)
         {
             return StatusCode(StatusCodes.Status200OK, DateTime.Now.ToString());
         }
 
-        [HttpPost("{key}/{value}")]
+        [HttpPost]
         [InValidateMyCache(@"[\/]home")]
-        public async Task<IActionResult> Post(string key, string value)
+        public async Task<IActionResult> Post()
         {
-            return StatusCode(StatusCodes.Status200OK, DateTime.Now.ToString());
+            return StatusCode(StatusCodes.Status200OK);
         }
 
-        /// <summary>
-        /// Api status check
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("status")]
-        public IActionResult Get()
+        [HttpPut]
+        [InValidateMyCache(@"[\/]home")]
+        public async Task<IActionResult> Put()
         {
-            return StatusCode(StatusCodes.Status200OK, "Its working");
+            return StatusCode(StatusCodes.Status200OK);
         }
 
-        /// <summary>
-        /// Home controller
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        [HttpDelete]
+        [InValidateMyCache(@"[\/]home")]
+        public async Task<IActionResult> Delete()
         {
-            return StatusCode(StatusCodes.Status200OK, _cacheService.GetType().Name);
+            return StatusCode(StatusCodes.Status200OK);
         }
     }
 }
