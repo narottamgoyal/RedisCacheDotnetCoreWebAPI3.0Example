@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
 
@@ -28,6 +29,18 @@ namespace RedisCacheWebAPIExample.Services
         {
             _cache.Set(key, value, timeSpan);
             return Task.CompletedTask;
+        }
+
+        public async Task SetCacheValueAsync(string key, object value)
+        {
+            if (string.IsNullOrWhiteSpace(key) || value == null) return;
+            await SetCacheValueAsync(key, JsonConvert.SerializeObject(value));
+        }
+
+        public async Task SetCacheValueAsync(string key, object value, TimeSpan timeSpan)
+        {
+            if (string.IsNullOrWhiteSpace(key) || value == null) return;
+            await SetCacheValueAsync(key, JsonConvert.SerializeObject(value), timeSpan);
         }
     }
 }

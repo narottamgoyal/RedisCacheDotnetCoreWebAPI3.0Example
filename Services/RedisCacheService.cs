@@ -1,4 +1,5 @@
-﻿using StackExchange.Redis;
+﻿using Newtonsoft.Json;
+using StackExchange.Redis;
 using System;
 using System.Linq;
 using System.Net;
@@ -38,6 +39,18 @@ namespace RedisCacheWebAPIExample.Services
         public async Task SetCacheValueAsync(string key, string value, TimeSpan timeSpan)
         {
             await _db.StringSetAsync(key, value, timeSpan);
+        }
+
+        public async Task SetCacheValueAsync(string key, object value)
+        {
+            if (string.IsNullOrWhiteSpace(key) || value == null) return;
+            await SetCacheValueAsync(key, JsonConvert.SerializeObject(value));
+        }
+
+        public async Task SetCacheValueAsync(string key, object value, TimeSpan timeSpan)
+        {
+            if (string.IsNullOrWhiteSpace(key) || value == null) return;
+            await SetCacheValueAsync(key, JsonConvert.SerializeObject(value), timeSpan);
         }
     }
 }

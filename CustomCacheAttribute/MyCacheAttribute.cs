@@ -23,9 +23,9 @@ namespace RedisCacheWebAPIExample.CustomCacheAttribute
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            var responseCacheService = context.HttpContext.RequestServices.GetRequiredService<IResponseCacheService>();
+            var responseCacheService = context.HttpContext.RequestServices.GetRequiredService<ICacheService>();
             var cacheKey = GetCacheKey(context.HttpContext.Request);
-            var cacheResponse = await responseCacheService.GetResponse(cacheKey);
+            var cacheResponse = await responseCacheService.GetCacheValueAsync(cacheKey);
 
             if (!string.IsNullOrWhiteSpace(cacheResponse))
             {
@@ -42,7 +42,7 @@ namespace RedisCacheWebAPIExample.CustomCacheAttribute
             var executedContext = await next();
             if (executedContext.Result is ObjectResult okObjectResult)
             {
-                await responseCacheService.CacheResponse(cacheKey, okObjectResult.Value, TimeSpan.FromSeconds(_shouldExpireInSeconds));
+                await responseCacheService.SetCacheValueAsync(cacheKey, okObjectResult.Value, TimeSpan.FromSeconds(_shouldExpireInSeconds));
             }
         }
 
