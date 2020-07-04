@@ -21,6 +21,12 @@ namespace RedisCacheWebAPIExample.CustomCacheAttribute
             _shouldExpireInSeconds = shouldExpireInSeconds;
         }
 
+        /// <summary>
+        /// Return cached data if available otherwise wait and cache once executed 
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="next"></param>
+        /// <returns></returns>
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var responseCacheService = context.HttpContext.RequestServices.GetRequiredService<ICacheService>();

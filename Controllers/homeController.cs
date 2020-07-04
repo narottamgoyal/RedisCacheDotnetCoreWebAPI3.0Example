@@ -4,45 +4,68 @@ using Microsoft.AspNetCore.Mvc;
 using RedisCacheWebAPIExample.CustomCacheAttribute;
 using RedisCacheWebAPIExample.Services;
 using System;
-using System.Threading.Tasks;
 
 namespace RedisCacheWebAPIExample.Controllers
 {
+    /// <summary>
+    /// HomeController
+    /// </summary>
     [EnableCors("corspolicy")]
     [ApiController]
     [Route("[controller]")]
-    public class homeController : ControllerBase
+    public class HomeController : ControllerBase
     {
         private readonly ICacheService _cacheService;
-        public homeController(ICacheService cacheService)
+        /// <summary>
+        /// HomeController
+        /// </summary>
+        /// <param name="cacheService"></param>
+        public HomeController(ICacheService cacheService)
         {
             _cacheService = cacheService;
         }
 
+        /// <summary>
+        /// Return cached data
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         [HttpGet("{key}")]
-        [MyCache(120)]
-        public async Task<IActionResult> GetAsync(string key)
+        [MyCache(60)]
+        public IActionResult Get(string key)
         {
             return StatusCode(StatusCodes.Status200OK, DateTime.Now.ToString());
         }
 
+        /// <summary>
+        /// Invalidate cache on post
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         [InValidateMyCache(@"[\/]home")]
-        public async Task<IActionResult> Post()
+        public IActionResult Post()
         {
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Invalidate cache on update
+        /// </summary>
+        /// <returns></returns>
         [HttpPut]
         [InValidateMyCache(@"[\/]home")]
-        public async Task<IActionResult> Put()
+        public IActionResult Put()
         {
             return StatusCode(StatusCodes.Status200OK);
         }
 
+        /// <summary>
+        /// Invalidate cache on delete
+        /// </summary>
+        /// <returns></returns>
         [HttpDelete]
         [InValidateMyCache(@"[\/]home")]
-        public async Task<IActionResult> Delete()
+        public IActionResult Delete()
         {
             return StatusCode(StatusCodes.Status200OK);
         }
